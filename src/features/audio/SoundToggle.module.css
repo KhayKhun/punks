@@ -1,0 +1,77 @@
+/* Fixed corner control; `difference` keeps it readable over video, black and white. */
+.toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-paper);
+  mix-blend-mode: difference;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--color-neon-yellow);
+  outline-offset: 3px;
+}
+
+.bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 0.9rem;
+}
+
+.bars > span {
+  width: 3px;
+  height: 25%;
+  background: currentColor;
+}
+
+.toggle[data-playing] .bars > span {
+  animation: bounce 900ms ease-in-out infinite alternate;
+}
+
+.toggle[data-playing] .bars > span:nth-child(2) {
+  animation-delay: -300ms;
+}
+
+.toggle[data-playing] .bars > span:nth-child(3) {
+  animation-delay: -600ms;
+}
+
+.toggle[data-playing] .bars > span:nth-child(4) {
+  animation-delay: -150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle[data-playing] .bars > span {
+    animation: none;
+    height: 70%;
+  }
+}
+
+@keyframes bounce {
+  from {
+    height: 20%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .label {
+    display: none;
+  }
+}

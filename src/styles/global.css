@@ -1,0 +1,33 @@
+:root {
+  /* Palette sampled from the video1 artwork. */
+  --color-ink: #000;
+  --color-paper: #fff;
+  --color-neon-pink: #e83ad8;
+  --color-neon-yellow: #f2ea3c;
+  --color-neon-cyan: #4fb4ec;
+
+  /* Rubik Glitch is the only typeface; the system stack is just a loading fallback. */
+  --font-display: 'Rubik Glitch', var(--font-fallback);
+  --font-fallback: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-ink);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100svh;
+}

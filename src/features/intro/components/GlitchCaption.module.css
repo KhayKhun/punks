@@ -1,0 +1,177 @@
+/* Centred on the anchor point; never wider than twice the space to the right edge. */
+.anchor {
+  position: absolute;
+  left: calc(var(--anchor-x) * 100%);
+  top: calc(var(--anchor-y) * 100%);
+  z-index: 5;
+  width: max-content;
+  max-width: min(34rem, calc((1 - var(--anchor-x)) * 200vw - 2rem));
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  /* Keeps the scrim's negative z-index behind the text but inside this block. */
+  isolation: isolate;
+}
+
+/* Centred lines sit on plain screens with the full width free — let them run long. */
+.anchor[data-centered] {
+  max-width: min(64rem, calc(100vw - 2rem));
+  text-align: center;
+}
+
+/* Soft dark halo that separates light text from the busy video1 artwork. */
+.scrim {
+  position: absolute;
+  inset: -3rem -4.5rem;
+  z-index: -1;
+  background: radial-gradient(
+    closest-side,
+    rgb(0 0 0 / 0.78),
+    rgb(0 0 0 / 0.6) 45%,
+    rgb(0 0 0 / 0.28) 75%,
+    rgb(0 0 0 / 0)
+  );
+  filter: blur(12px);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.scrim[data-visible] {
+  opacity: 1;
+}
+
+.caption {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.9vw, 2.75rem);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--color-paper);
+  text-shadow: 0 2px 14px rgb(0 0 0 / 0.65);
+}
+
+.caption[data-hit] {
+  font-size: clamp(1.6rem, 4.6vw, 4.25rem);
+  line-height: 1.1;
+}
+
+.caption[data-tone='dark'] {
+  color: var(--color-ink);
+  text-shadow:
+    2px 0 0 var(--color-neon-pink),
+    -2px 0 0 var(--color-neon-cyan);
+}
+
+/* RGB-split copies, only visible while glitching. */
+.caption::before,
+.caption::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  text-shadow: none;
+  pointer-events: none;
+}
+
+.caption::before {
+  color: var(--color-neon-pink);
+}
+
+.caption::after {
+  color: var(--color-neon-cyan);
+}
+
+/* ── In ─────────────────────────────────────────────── */
+
+.caption[data-stage='in'] {
+  animation: glitch-in var(--glitch-ms) steps(1, end) both;
+}
+
+.caption[data-stage='in']::before {
+  animation: slice-a var(--glitch-ms) steps(1, end) both;
+}
+
+.caption[data-stage='in']::after {
+  animation: slice-b var(--glitch-ms) steps(1, end) both;
+}
+
+.caption[data-hit][data-stage='in'] {
+  animation: stamp calc(var(--glitch-ms) * 1.4) cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+/* ── Out ────────────────────────────────────────────── */
+
+.caption[data-stage='out'] {
+  animation: glitch-out var(--glitch-out-ms) steps(1, end) forwards;
+}
+
+.caption[data-stage='out']::before {
+  animation: slice-b var(--glitch-out-ms) steps(1, end) both;
+}
+
+.caption[data-stage='out']::after {
+  animation: slice-a var(--glitch-out-ms) steps(1, end) both;
+}
+
+/* ── Reduced motion ─────────────────────────────────── */
+
+.caption[data-reduced],
+.caption[data-reduced][data-hit] {
+  animation: fade-in 300ms ease-out both;
+}
+
+.caption[data-reduced]::before,
+.caption[data-reduced]::after {
+  animation: none;
+}
+
+@keyframes glitch-in {
+  0% { opacity: 0; transform: translateX(-8px) skewX(-14deg); }
+  12% { opacity: 1; transform: translateX(5px) skewX(6deg); }
+  24% { opacity: 0.25; transform: translateX(-3px); }
+  36% { opacity: 1; transform: translateX(2px) skewX(-4deg); }
+  52% { opacity: 0.7; transform: translateX(-1px); }
+  68% { opacity: 1; transform: none; }
+  84% { opacity: 0.85; }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes glitch-out {
+  0% { opacity: 1; transform: none; }
+  25% { opacity: 0.4; transform: translateX(6px) skewX(10deg); }
+  50% { opacity: 1; transform: translateX(-7px) skewX(-6deg); }
+  75% { opacity: 0.2; transform: translateX(3px); }
+  100% { opacity: 0; transform: translateX(12px) skewX(18deg); }
+}
+
+@keyframes slice-a {
+  0% { opacity: 1; clip-path: inset(8% 0 72% 0); transform: translateX(-10px); }
+  20% { clip-path: inset(58% 0 16% 0); transform: translateX(7px); }
+  40% { clip-path: inset(30% 0 48% 0); transform: translateX(-5px); }
+  60% { clip-path: inset(78% 0 4% 0); transform: translateX(4px); }
+  80% { clip-path: inset(4% 0 86% 0); transform: translateX(-2px); }
+  100% { opacity: 0; clip-path: inset(50% 0 50% 0); transform: none; }
+}
+
+@keyframes slice-b {
+  0% { opacity: 1; clip-path: inset(64% 0 10% 0); transform: translateX(9px); }
+  20% { clip-path: inset(14% 0 66% 0); transform: translateX(-6px); }
+  40% { clip-path: inset(44% 0 30% 0); transform: translateX(5px); }
+  60% { clip-path: inset(2% 0 80% 0); transform: translateX(-4px); }
+  80% { clip-path: inset(70% 0 12% 0); transform: translateX(2px); }
+  100% { opacity: 0; clip-path: inset(50% 0 50% 0); transform: none; }
+}
+
+@keyframes stamp {
+  0% { opacity: 0; transform: scale(1.7) rotate(-4deg); }
+  28% { opacity: 1; transform: scale(0.94) rotate(1.5deg); }
+  42% { transform: translate(-5px, 3px) scale(1.03) rotate(-1deg); }
+  56% { transform: translate(4px, -2px) scale(0.99); }
+  70% { transform: translate(-2px, 1px) scale(1.01); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
